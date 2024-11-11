@@ -1,16 +1,27 @@
 'use client';
 
 import { experimental_useObject as useObject } from 'ai/react';
-import { notificationSchema } from '@/app/api/notifications/schema';
+import Link from 'next/link';
+import { CookingPot } from 'lucide-react';
+import { recipeSchema } from '@/app/api/recipes/schema';
+import { Button } from '@/components/ui/button';
+import IngredientsCard from '@/components/ingredients-card';
 
 export default function Ai() {
   const { isLoading, stop, object, submit, error } = useObject({
-    api: '/api/notifications',
-    schema: notificationSchema,
+    api: '/api/recipes',
+    schema: recipeSchema,
   });
 
+  const handleGenerate = () => {
+    submit({
+      ingredients: ['肉', '玉ねぎ', 'じゃがいも'],
+      remarks: '簡単',
+    });
+  };
+
   return (
-    <>
+    <div className='py-8'>
       {error && <div>An error occurred.</div>}
 
       {isLoading && (
@@ -22,14 +33,23 @@ export default function Ai() {
         </div>
       )}
 
-      <button onClick={() => submit('Messages during finals week.')}>Generate notifications</button>
+      <div className='grid grid-cols-6 gap-4'>
+        {Array.from({ length: 8 }).map((_, index) => (
+          <IngredientsCard key={index} />
+        ))}
+      </div>
 
-      {object?.notifications?.map((notification, index) => (
+      <div className='flex justify-center'>
+        <Button onClick={handleGenerate}>
+          <CookingPot /> 料理を生成する
+        </Button>
+      </div>
+
+      {object?.recipes?.map((recipes, index) => (
         <div key={index}>
-          <p>{notification?.name}</p>
-          <p>{notification?.message}</p>
+          <Link href={recipes?.referenceSites || ''}>{recipes?.dishName}</Link>
         </div>
       ))}
-    </>
+    </div>
   );
 }
