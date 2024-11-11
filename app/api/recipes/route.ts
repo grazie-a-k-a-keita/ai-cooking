@@ -9,6 +9,8 @@ export const maxDuration = 30;
 export async function POST(req: Request) {
   const context: Payload = await req.json();
 
+  console.log('payload: ', context);
+
   let prompt = '日本語で料理のレシピを5つ生成します:';
 
   if (context.ingredients.length > 0) {
